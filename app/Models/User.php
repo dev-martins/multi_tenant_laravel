@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Role;
+use App\Models\Permission;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -52,5 +54,45 @@ class User extends Authenticatable
     public function posts()
     {
         return $this->belongsTo(Post::class);
+    }
+
+    /**
+     * retornar todas as funções do usuário
+     * relação de muitos para muitos
+     */
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
+
+    /**
+     * retornar todas as funções vinculadas a permissão
+     */
+    public function hasPermission(Permission $permissions)
+    {
+        return $this->hasAnyRoles($permissions->role);
+    }
+
+    /**
+     * verificar se usuário tem permissão específica
+     */
+
+    public function hasAnyRoles($roles)
+    {
+
+        /*if(is_array($roles) || is_object($roles)){
+            foreach ($roles as $role) {
+                return $this->hasAnyRoles($role);
+            }
+        }*/
+
+        // se for um array ou objeto entra aqui
+        if (is_array($roles) || is_object($roles)) {
+            return $roles->intersect($this->roles)->count();
+        }
+
+        // se for uma string entra aqui
+        return $this->roles->contains('name', $roles);
     }
 }
