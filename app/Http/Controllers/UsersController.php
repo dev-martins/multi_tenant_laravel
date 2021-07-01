@@ -8,6 +8,13 @@ use Illuminate\Support\Facades\Auth;
 
 class UsersController extends Controller
 {
+    private $user;
+
+    public function __construct()
+    {
+        $this->user = new User();
+    }
+
     public function createUser(Request $request)
     {
         try {

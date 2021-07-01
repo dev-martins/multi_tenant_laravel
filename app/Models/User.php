@@ -71,7 +71,7 @@ class User extends Authenticatable
      */
     public function hasPermission(Permission $permissions)
     {
-        return $this->hasAnyRoles($permissions->role);
+        return $this->hasAnyRoles($permissions->roles);
     }
 
     /**
@@ -80,13 +80,6 @@ class User extends Authenticatable
 
     public function hasAnyRoles($roles)
     {
-
-        /*if(is_array($roles) || is_object($roles)){
-            foreach ($roles as $role) {
-                return $this->hasAnyRoles($role);
-            }
-        }*/
-
         // se for um array ou objeto entra aqui
         if (is_array($roles) || is_object($roles)) {
             return $roles->intersect($this->roles)->count();

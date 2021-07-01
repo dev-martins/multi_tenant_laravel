@@ -2,9 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Post;
-use App\Models\User;
+
+use App\Models\{
+    Post,
+    User,
+    Role,
+    Permission,
+};
+
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreUpdatePostRequest;
 
@@ -12,18 +19,18 @@ class PostController extends Controller
 {
     private $post;
 
-    public function __construct(Post $post)
+    public function __construct(Post $posts)
     {
-        $this->post = $post;
+        $this->posts = $posts;
     }
+    
     public function index()
     {
         try {
 
-            // $posts = $this->posts->get();
-            // $this->authorize('list-post', $posts);
-
-            return response()->json($this->post->get(), 200);
+            $this->authorize('view_post');
+            $posts = $this->posts->get();
+            return response()->json($posts, 200);
         } catch (\Throwable $th) {
             return response()->json(['msg' => $th->getMessage()], 500);
         }
@@ -32,6 +39,8 @@ class PostController extends Controller
     public function createPost(StoreUpdatePostRequest $request)
     {
         try {
+
+            $this->authorize('create_post');
             $data = $request->all();
             $user = auth()->user();
             $data['image'] = $this->uploadFileBase64($request->image, $user);
@@ -73,6 +82,7 @@ class PostController extends Controller
     {
         try {
 
+            $this->authorize('view_post');
             $post = $this->post->find($id);
             if (!is_null($post)) {
                 return response()->json($post, 200);
@@ -87,6 +97,7 @@ class PostController extends Controller
     {
         try {
 
+            $this->authorize('update_post');
             $post = $this->post->find($id);
 
             if (!$post) {

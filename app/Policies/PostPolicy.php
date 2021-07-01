@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Tenant\ManagerTenant;
 // use App\Models\User;
 use App\Models\Post;
+use Illuminate\Auth\Access\Response;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class PostPolicy
@@ -22,8 +23,11 @@ class PostPolicy
         $this->user = auth()->user();
     }
 
-    public function listPost(Post $post)
+    public function Post(Post $post)
     {
-        return $this->user === $post->user_id;
+
+        return $this->user->id === $post->user_id
+            ? Response::allow()
+            : Response::deny('nada');
     }
 }

@@ -14,15 +14,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-Route::prefix('tenants/')->namespace('App\Http\Controllers')->group(function () {
-    Route::get('', 'TenantController@getAllTenants')->name('getAllTenantsApi');
-    Route::post('', 'TenantController@createTenant')->name('createTenantApi');
-    Route::put('{id}', 'TenantController@updateTenant')->name('updateTenantApi');
-    Route::delete('{id}', 'TenantController@deleteTenant')->name('deleteTenantApi');
+Route::group(['middleware' => ['auth:api']], function () {
+    Route::prefix('tenants/')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('', 'TenantController@getAllTenants')->name('getAllTenantsApi');
+        Route::post('', 'TenantController@createTenant')->name('createTenantApi');
+        Route::get('{id}', 'TenantController@getTenant')->name('getTenantApi');
+        Route::put('{id}', 'TenantController@updateTenant')->name('updateTenantApi');
+        Route::delete('{id}', 'TenantController@deleteTenant')->name('deleteTenantApi');
+    });
 });
 
 Route::prefix('users/')->namespace('App\Http\Controllers')->group(function () {
@@ -31,8 +30,8 @@ Route::prefix('users/')->namespace('App\Http\Controllers')->group(function () {
         Route::post('login', 'UsersController@loginUser')->name('loginUserApi');
     });
 
-    Route::get('', 'UsersController@getAllUsers')->name('getAllUsersApi');
     Route::post('', 'UsersController@createUser')->name('createUserApi');
+    Route::get('', 'UsersController@getAllUsers')->name('getAllUsersApi');
     Route::put('{id}', 'UsersController@updateUser')->name('updateUserApi');
     Route::delete('{id}', 'UsersController@deleteUser')->name('deleteUserApi');
 });
@@ -68,10 +67,21 @@ Route::prefix('roles/')->namespace('App\Http\Controllers\ACL')->group(function (
 
 Route::prefix('permission_role/')->namespace('App\Http\Controllers\ACL')->group(function () {
     Route::group(['middleware' => ['auth:api']], function () {
-        Route::get('', 'PermissionsRolesController@index')->name('getAllPermissionsRolesApi');
-        Route::get('{id}', 'PermissionsRolesController@getPermissionRole')->name('getPermissionRoleApi');
-        Route::put('{id}', 'PermissionsRolesController@updatePermissionRole')->name('updatePermissionRoleApi');
-        Route::delete('{id}', 'PermissionsRolesController@deletePermissionRole')->name('deletePermissionRoleApi');
-        Route::post('', 'PermissionsRolesController@createPermissionRole')->name('createPermissionRoleApi');
+        // Route::get('', 'PermissionsRolesController@index')->name('getAllPermissionsRolesApi');
+        // Route::get('{id}', 'PermissionsRolesController@getPermissionRole')->name('getPermissionRoleApi');
+        // Route::put('{id}', 'PermissionsRolesController@updatePermissionRole')->name('updatePermissionRoleApi');
+        // Route::delete('{id}', 'PermissionsRolesController@deletePermissionRole')->name('deletePermissionRoleApi');
+        Route::post('', 'PermissionsRolesController@linkRolePermission')->name('linkRolePermissionApi');
+    });
+});
+
+Route::prefix('role_user/')->namespace('App\Http\Controllers\ACL')->group(function () {
+    Route::group(['middleware' => ['auth:api']], function () {
+        Route::post('', 'RoleUserController@linkUserRole')->name('linkUserRoleApi');
+        // Route::get('', 'RoleUserController@index')->name('getAllPermissionsRolesApi');
+        // Route::get('{id}', 'RoleUserController@getPermissionRole')->name('getPermissionRoleApi');
+        // Route::put('{id}', 'RoleUserController@updatePermissionRole')->name('updatePermissionRoleApi');
+        // Route::delete('{id}', 'RoleUserController@deletePermissionRole')->name('deletePermissionRoleApi');
+        // Route::post('', 'RoleUserController@linkRolePermission')->name('linkRolePermissionApi');
     });
 });
