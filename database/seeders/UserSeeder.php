@@ -15,14 +15,17 @@ class UserSeeder extends Seeder
     public function run()
     {
         $user = new User();
-        $user->create([
+
+        $user = $user->create([
             'name' => 'Master',
             'email' => env('EMAIL_MASTER'),
             'email_verified_at' => now(),
-            'password' => bcrypt('PASSWORD_DEFAULT'),
+            'password' => bcrypt(env('PASSWORD_DEFAULT')),
             'tenant_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
+
+        // $user->createToken($user->email)->accessToken;
     }
 }

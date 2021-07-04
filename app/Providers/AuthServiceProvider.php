@@ -38,7 +38,7 @@ class AuthServiceProvider extends ServiceProvider
 
                 return $user->hasPermission($permission)
                     ? Response::allow()
-                    : Response::deny('Seu nível de permissão não permite executar essa ação!', 403);
+                    : Response::deny('Sua função não permite executar essa ação!', 403);
             });
 
             //primeira verificação
